@@ -114,9 +114,9 @@ const loginUser = asyncHandler( async (req, res) => {
     const loggedInUser = await User.findById(user._id).select("-password -refresh-token")  
 
     const options = {
-        httpOnly: false,
-        secure: true, // Set to true if using HTTPS
-        //sameSite: 'None', // Must be 'None' for cross-site cookies
+        httpOnly: true,
+        secure: true,
+        sameSite: 'None',
         maxAge: 24 * 60 * 60 * 1000 // 1 day in milliseconds
       };
 
