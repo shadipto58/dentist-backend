@@ -4,9 +4,21 @@ import express from "express";
 
 const app = express();
 
+const allowedOrigins = [
+  process.env.CORS_ORIGIN,
+  process.env.CORS_ORIGIN1,
+  process.env.CORS_ORIGIN2
+];
+
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: (origin, callback) => {
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: "GET, POST, DELETE , PATCH , PUT",
     credentials: true,
     optionsSuccessStatus: 200,
@@ -20,8 +32,8 @@ app.use(cookieParser());
 
 // All Routes
 
+import appointmentRouter from "./routes/appointment.routes.js";
 import userRouter from "./routes/user.routes.js";
-import appointmentRouter from "./routes/appointment.routes.js"
 
 // Route Declaration
 
@@ -35,3 +47,4 @@ app.get("/", (req, res) => {
 });
 
 export { app };
+
