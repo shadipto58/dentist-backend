@@ -59,7 +59,7 @@ const getAppointmentsByUserId = asyncHandler( async (req, res) => {
     //console.log("The appointment request is:",req);
     // console.log("The appointment request body is:",req.body);
     const requestById = req.user._id;
-    console.log("Requested user id is",requestById);
+    // console.log("Requested user id is",requestById);
 
     if(!requestById){
         throw new ApiError(400, "Missing User IDs")
@@ -67,7 +67,7 @@ const getAppointmentsByUserId = asyncHandler( async (req, res) => {
 
     const appointmentList = await Appointment.find({ createdBy: requestById }).sort({ createdAt: -1 })
 
-    console.log("Requested Appointment list",appointmentList);
+    // console.log("Requested Appointment list",appointmentList);
 
     return res.status(201).json(
         new ApiResponse(200 , appointmentList , "Appointment List Get success")

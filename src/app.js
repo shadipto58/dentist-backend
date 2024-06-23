@@ -2,6 +2,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 
+
 const app = express();
 
 const allowedOrigins = [
@@ -34,11 +35,13 @@ app.use(cookieParser());
 
 import appointmentRouter from "./routes/appointment.routes.js";
 import userRouter from "./routes/user.routes.js";
+import paymentRouter from "./routes/payment.routes.js"
 
 // Route Declaration
 
 app.use("/api/users", userRouter);
 app.use("/api/appointment", appointmentRouter);
+app.use("/api/payment", paymentRouter);
 
 
 
