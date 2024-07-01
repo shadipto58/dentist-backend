@@ -8,7 +8,10 @@ import { paymentInit, paymentSuccess } from "../controllers/payment.controller.j
 const router = Router();
 
 router.route("").post(paymentInit)
-router.route("/success/:tranId").post(paymentSuccess)
+router.route("/success").post(paymentSuccess)
+router.route("/fail").post(paymentSuccess)
+router.route("/cancel").post(paymentSuccess)
+router.route("/ipn").post(paymentSuccess)
 
 
 

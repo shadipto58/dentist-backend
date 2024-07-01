@@ -1,8 +1,7 @@
 import SSLCommerzPayment from "sslcommerz-lts";
+import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiError } from "../utils/ApiError.js";
-
 
 const tran_id = Math.floor(100000 + Math.random() * 900000).toString();
 const store_id = process.env.SSL_STORE_ID;
@@ -11,14 +10,14 @@ const is_live = false; //true for live, false for sandbox
 
 const paymentInit = asyncHandler(async (req, res) => {
   console.log("The paymentInit request body is:", req.body);
-  const { name , phone } = req.body;
+  const { name, phone } = req.body;
 
   try {
     const data = {
       total_amount: 100,
       currency: "BDT",
       tran_id: tran_id, // use unique tran_id for each api call
-      success_url: `http://localhost:5000/api/payment/success/${tran_id}`,
+      success_url: `${process.env.SERVER_API}/payment/success`,
       fail_url: "http://localhost:3000/failed",
       cancel_url: "http://localhost:3000/cancle",
       ipn_url: "http://localhost:3000/ipn",
@@ -50,7 +49,9 @@ const paymentInit = asyncHandler(async (req, res) => {
     const paymentGetwaydata = await sslcz.init(data);
     // console.log("Redirecting to oppo: ", paymentGetwaydata);
 
-    return res.status(201).json(new ApiResponse(200,{paymentGetwaydata}, "paymentInit created"));
+    return res
+      .status(201)
+      .json(new ApiResponse(200, { paymentGetwaydata }, "paymentInit created"));
   } catch (error) {
     console.error("Error paymentInit:", error);
     return res
@@ -60,10 +61,18 @@ const paymentInit = asyncHandler(async (req, res) => {
 });
 
 const paymentSuccess = asyncHandler(async (req, res) => {
-  console.log("tranId is " + req.params.tranId);
-
-  
+  console.log("Payment Success :", req);
+  return res.redirect("http://localhost:3000/payment/success");
 });
 
+const paymentCancel = asyncHandler(async (req, res) => {
+  console.log("Payment Cancel :", req);
+  return res.redirect("http://localhost:3000/payment/cancel");
+});
 
-export { paymentInit , paymentSuccess };
+const paymentIpn = asyncHandler(async (req, res) => {
+  console.log("Payment IPN :", req);
+  return res.redirect("http://localhost:3000/payment/ipn");
+});
+
+export { paymentInit, paymentSuccess, paymentCancel, paymentIpn};
