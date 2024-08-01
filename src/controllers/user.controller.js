@@ -122,7 +122,12 @@ const loginUser = asyncHandler( async (req, res) => {
 
     return res
     .status(200)
-    .cookie("accessToken", accessToken, options)
+    .cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'None',
+        maxAge:  100000
+      })
     .cookie("refreshToken", refreshToken, options)
     .json(
         new ApiResponse(200,
@@ -171,9 +176,11 @@ const logoutUser = asyncHandler( async (req, res) => {
     // Remove refresh token from database
     // Remove refresh token from cookie
     // Return response
+    console.log("The Request body 179 line:", req.body);
+    const UserId = req.body.userId || req.user._id
 
     await User.findByIdAndUpdate(
-        req.user._id,
+        UserId,
         {
             $unset: {
                 refreshToken: 1
@@ -231,14 +238,13 @@ const refreshAccessToken = asyncHandler( async (req, res)=> {
             secure: true,
         }
     
-        const {accessToken , newRefreshToken} = await generateAccessTokenAndRefreshToken(user._id)
+        const accessToken = user.generateAccessToken();
     
         return res
         .status(200)
         .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", newRefreshToken, options)
         .json(
-            new ApiResponse(200,{accessToken , refreshToken :newRefreshToken},"Access Token Refreshed!")
+            new ApiResponse(200,{accessToken},"Access Token Refreshed!")
         )
     } catch (error) {
         throw new ApiError(401, error.message || "Invalid Refresh Token Error")

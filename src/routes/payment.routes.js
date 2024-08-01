@@ -16,13 +16,4 @@ router.route("/ipn").post(paymentSuccess)
 
 
 
-
-
-
-
-
-
-
-
-
 export default router;
